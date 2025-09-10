@@ -12,6 +12,7 @@ public class Robot {
     public static LinearOpMode opMode;
     public static ArrayList<Servo> servos = new ArrayList<>();
     public static ArrayList<DcMotorEx> motors = new ArrayList<>();
+    public static ArrayList<DcMotorEx> wheels = new ArrayList<>();
     public static void set(HardwareMap hardwareMap, LinearOpMode op) {
         hwMap = hardwareMap;
         opMode = op;

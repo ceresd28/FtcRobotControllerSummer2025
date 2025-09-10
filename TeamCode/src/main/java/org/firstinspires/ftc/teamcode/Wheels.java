@@ -4,41 +4,42 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import java.util.ArrayList;
+
 public class Wheels {
     public static DcMotorEx topLeft;
     public static DcMotorEx topRight;
     public static DcMotorEx bottomLeft;
     public static DcMotorEx bottomRight;
+    public static ArrayList<DcMotorEx> wheels = new ArrayList<>();
     private static double angle, dist;
     public static void create(String tL, String tR, String bL, String bR, boolean rollable) {
         topLeft = Motors.create(tL,rollable);
         topRight = Motors.create(tR,rollable);
         bottomLeft = Motors.create(bL,rollable);
         bottomRight = Motors.create(bR,rollable);
+        Robot.wheels.add(topLeft);
+        Robot.wheels.add(topRight);
+        Robot.wheels.add(bottomLeft);
+        Robot.wheels.add(bottomRight);
     }
-    public static void calculateAngles(double x, double y) {
-        dist = Math.sqrt(x*x+y*y);
-        angle = (dist > 0) ? Math.atan2(x, y) : 0;
-        // perhaps switch to field-centric controls?
+    public static void move(double x, double y, double r) {
+        Motors.runControlled(topLeft,y+x+r);
+        Motors.runControlled(topRight,y-x-r);
+        Motors.runControlled(bottomLeft,y-x+r);
+        Motors.runControlled(bottomRight,y+x-r);
     }
-    public static void calculate(double x, double y, double r) {
-
-
-        /*
-        backSlashAngle = AngleUnit.normalizeRadians(angle - Math.PI / 4);
-        frontSlashAngle = AngleUnit.normalizeRadians(angle - 3 * Math.PI / 4);
-        backSlashAngle = (Math.abs(backSlashAngle)/-Math.PI+0.5)*2;
-        frontSlashAngle = (Math.abs(frontSlashAngle)/-Math.PI+0.5)*2;
-        */
-
-
-        // be able to get auton from teleop??? roadrunner??????
-        // maybeee channge runtopos to runwithencoder till reach target pos?
-    }
-    public static void move(double tL, double tR, double bL, double bR) {
-        Motors.runControlled(topLeft,tL);
-        Motors.runControlled(topRight,tR);
-        Motors.runControlled(bottomLeft,bL);
-        Motors.runControlled(bottomRight,bR);
+    public static void TeleOpDrive() {
+        double x = Robot.opMode.gamepad1.left_stick_x;
+        double y = -Robot.opMode.gamepad1.left_stick_y;
+        double r = Robot.opMode.gamepad1.right_stick_x;
+        if (!Robot.opMode.gamepad1.left_stick_button) {
+            x*=.9;
+            y*=.9;
+        }
+        if (!Robot.opMode.gamepad1.right_stick_button) {
+            r*=.9;
+        }
+        move(x,y,r);
     }
 }

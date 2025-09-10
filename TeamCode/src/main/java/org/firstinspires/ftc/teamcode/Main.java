@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="test",group="")
@@ -10,28 +12,32 @@ public class Main extends LinearOpMode {
     @Override
     public void runOpMode() {
         // INIT PRESSED: declare & set up everything
-        Servo claw = hardwareMap.get(Servo.class,"claw");
-        Servo wrist = hardwareMap.get(Servo.class,"wrist");
-        Servo elbow1 = hardwareMap.get(Servo.class,"elbow1");
-        Servo elbow2 = hardwareMap.get(Servo.class,"elbow2");
+        Robot.set(hardwareMap,this);
+        Servo claw = Servos.create("claw");
+        Servo wrist = Servos.create("wrist");
+        Servo elbow1 = Servos.create("elbow1");
+        Servo elbow2 = Servos.create("elbow2");
+
+        Wheels.create("topLeft","topRight","bottomLeft","bottomRight",true);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         Servo test = claw;
-
+        Servos.runTo(test,.5,1);
         waitForStart();
         // START PRESSED & OP MODE BEGINS:
         while (opModeIsActive()) {
             // configure controls
-            double add=0;
+            Wheels.TeleOpDrive();
             if (gamepad1.dpad_up) {
-                add=.1;
+                Servos.runToIncrement(test,.1,2);
             } else if (gamepad1.dpad_down) {
-                add=-.1;
+                Servos.runToIncrement(test,-.1,2);
             }
-            claw.scaleRange(0.0,1.0);
-            test.setPosition(test.getPosition()+add);
+            Servos.changeRangeOfMotion(test,0.0,1.0,true);
+
+
 
             // send telemetry data
             telemetry.addData("TEST", test.getPosition());
